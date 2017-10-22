@@ -1,0 +1,134 @@
+#!/bin/sh
+
+if [ "$1" == "" ] ; then
+  echo Parameter fehlt.
+  exit
+fi
+
+
+K1="ein.tex"
+K2="grund.tex"
+K3="sort.tex"
+K4="model.tex"
+K5="einfach.tex"
+K6="prio.tex"
+K7="bal.tex"
+K8="hash.tex"
+K9="union.tex"
+K10="dfs.tex"
+K11="kurz.tex"
+
+
+aufgaben=`cat wz$1.tex|grep -v ^% |grep Punkte\) |sed 's/Die//' |sed 's/Aufgaben//'|sed -r 's/[%]*([je]*[ +0123456789$=]*Punkte)//g'|sed 's/sowie//'|sed 's/und//'|sed 's/ [,.]//g'|sed 's/W[.0123456789]*//g'`
+#aufgaben=`cat wz2Problem.tex |grep -v ^% |grep Punkte\) |sed 's/Die//' |sed 's/Aufgaben//'|sed 's/[%]*([je]*[ +0123456789$=]*Punkte)//g'|sed 's/sowie//'|sed 's/und//'|sed 's/ [,.]//g'|sed 's/W[.0123456789]*//g'`
+#
+#for a in $aufgaben ; do
+#
+#
+#  TEST=`echo $a|sed 's/[1234567890]*.[1234567890].*/&OKOKOKOKOK_WEG/'|sed 's/_WEG.*//'`
+#  if [ "`echo $TEST|grep OKOKOKOKOK`" != ""  ] ; then
+#    echo $a :$TEST:
+#  fi
+#
+#done
+#exit
+
+#if [ "1" == "2" ] ; then
+
+#rm def$1.tex full$1.tex 2>/dev/null
+rm full$1.tex 2>/dev/null
+
+cat wz$1.tex >full$1.tex
+echo >>full$1.tex
+echo "\\newpage" >>full$1.tex
+echo "\\begin{Tproblemsection}" >>full$1.tex
+echo "\\renewcommand{\label}[1]{\\ignorespaces}" >>full$1.tex
+echo "\\noindent{\\bf Auszug aus dem Skript:}" >>full$1.tex
+echo >>full$1.tex
+
+for a in $aufgaben ; do
+
+  TEST=`echo $a|sed 's/[1234567890][1234567890]*.[1234567890][1234567890]*/&OKOKOKOKOK_WEG/'|sed 's/_WEG.*//'`
+  if [ "`echo $TEST|grep OKOKOKOKOK`" != ""  ] ; then
+
+#   echo $TEST
+
+   kap=`echo $TEST|sed 's/\..*//'`
+   nr=`echo $TEST|sed 's/.*\.//'|sed 's/(.*)//'|sed 's/\\\\//g'|sed 's/%.*//'|sed 's/OKOKOKOKOK//g'`
+
+   if [ "$a" != "\\\\" ] ; then
+    echo :$a: :$kap: ::$nr:: |sed 's/OKOKOKOKOK//g'
+
+    source=`cat $0 |grep K$kap|sed 's/.*=//'|sed 's/"//g'`
+    count="0"
+    nrmatch=`expr $nr \* 2`
+    nrmatch=`expr $nrmatch \- 1`
+    line="0"
+
+
+    cat $source |sed 's/\\$/\\ /' |\
+    while read i ; do
+      line=`expr $line + 1`
+  #    echo $line $i >&2
+      found=`echo $i|grep -v "^%" |grep "{Tproblem}"`
+      if [ "$found" != "" ] ; then
+        count=`expr $count + 1`
+        if [ "$count" == "$nrmatch" ] ; then
+          echo -e -n "Aufgabe $kap.$nr "
+          echo "\\setcounter{chapter}{$kap}" >>full$1.tex
+          nr=`expr $nr \- 1`
+          echo "\\setcounter{Tproblemcounter}{$nr}" >>full$1.tex
+          match="1"
+          start="$line"
+        else
+          if [ "$match" == "1" ] ; then
+            match="0"
+            Z=`expr $line \- $start `
+            Z=`expr $Z + 1`
+            echo "("Von: $start Bis: $line Zeilen: $Z")"
+  #          echo
+  #          head -n $line $source|tail -n $Z|sed 's|[Tex]*ref{[[:alnum:]:]*}|&###end###|'|sed 's|[Tex]*ref{|\\Fref:|'|sed 's|}###end###||'|sed 's|input |input ../skript/|'|sed 's|\\begin{Tproblem}{|\\begin{Tproblem}{\\bf|'|sed 's|\\begin{Tproblem}.*)}|&###PKT###|'|sed 's/}###PKT###/.}/'|sed 's|\\begin{Tproblem}|&\\rm|' >>full$1.tex
+            head -n $line $source|tail -n $Z |grep -v ^% >>full$1.tex
+  #                               |sed "s|\(\\\\[Tex]*ref{\)\([[:alnum:]:]*\)'\(}\)|\1\2strich\3|" \
+  #                               |sed -r 's|(\\[Tex]*ref\{)([[:alnum:]:]*\})|{\\Fref\2|'|sed -r 's/(\\Fref.*):(.*):(.*):/\1\2\3_/g' |sed -r 's/(\\Fref.*):(.*):/\1\2/g' |sed -r 's/(\\Fref.*):/\1/g'  >>full$1.tex
+  #                               |sed 's|input |input ../skript/|' \
+  #                               |sed 's|\\begin{Thinweis}|\n\n\\noindent{\\em Hinweis:} |'|sed -r 's/\\end\{Thinweis\}(.*)/\1%/' >>full$1.tex
+  #                               |sed 's|\\begin{Tproblem}.*)}|&###PKT###|'|sed 's/}###PKT###/.}/' >>full$1.tex
+            echo >>full$1.tex
+          fi
+        fi
+  #    else
+  #      if [ "$count" == "$nrmatch" ] ; then
+  #        echo $i
+  #      fi
+      fi
+
+
+    done
+  #  echo "\\vspace{1mm}" >>full$1.tex
+
+   fi
+  fi
+
+done
+#fi
+
+FILES=`cat $0|grep ^K.=|sed -r 's/K.="(.*)"/\1/'|sed 's/tex/aux/'`
+#echo $FILES
+
+#cat full$1.tex|grep Fref|sed -r "s/.*\\Fref([[:alnum:]]*)\}.*\\Fref([[:alnum:]]*)\}.*/\1 \n \2/"|sed -r 's/.*\\Fref([[:alnum:]]*)\}.*/\1/'|sort -u |\
+#while read i ; do
+#
+##  echo $i
+#  was=`cat $FILES|sed 's/://g'| sed "s|\(newlabel{\)\([[:alnum:]:]*\)'\(}\)|\1\2strich\3|" | grep \{$i\}|sed  "s/.*{{//"|sed 's/}.*//'|sed 's/{//'`
+#
+#
+#  echo "\\newcommand{\\Fref$i}{$was}" >>def$1.tex
+#
+#done
+
+#echo >>def$1.tex
+#cat full$1.tex >>def$1.tex
+
+#cat def$1.tex >>full$1.tex
+echo "\\end{Tproblemsection}" >>full$1.tex
