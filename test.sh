@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 
 # TEST="4.20OKOKOKOKOK"
 # if [[ `echo $TEST | grep "OKOKOKOKOK"` != "" ]]; then

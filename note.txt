@@ -40,7 +40,8 @@ Pipe to (5)
 5) sed 's/Aufgaben//'
 subtitutes the word "Aufgaben" with an empty string. Pipe to (6)
 
-6) sed 's/[%]*([je]*[ +0123456789$=]*Punkte)//g'
+6) sed -r 's/[%]*([je]*[ +0123456789$=]*Punkte)//g'
+-r means extended regEX
 match any occurance of literal % followed by
 any combination of "j" and "e" followed by
 any combination of the following characters +0123456789$= including whitespaces
@@ -94,7 +95,6 @@ echo >>full$1.tex
 append a newline to full$1.tex
 
 #######################For each in variable aufgaben##########################
-each item in $aufgaben is $a
 variable TEST is the result of the following commands
 1) echo $a
 output the content of $a pipe to (2)
@@ -111,4 +111,25 @@ all matched strings will be replaced with itself appended by the string
 3) sed 's/_WEG.*//'
 effectively remove the first occurance of literal string "_WEG" and
 everything after it from input.
-Assign output to variable
+Assign output to variable TEST
+
+This ensure that TEST has the format of 
+<digit><0 or more digit><any one char thats not digit><digit><0 or more digit>
+
+=========================after TEST=============================
+if [ "`echo $TEST|grep OKOKOKOKOK`" != ""  ] ; then
+A string contains Übung number will be appended with OKOKOKOKOK after TEST
+this check ensures we could read chapter & exercise number from TEST
+
+kap=`echo $TEST|sed 's/\..*//'`
+read variable TEST, 
+find a literal fullstop (a dot), delete it, and delete everthing after it
+what is left must be the chapter number
+
+nr=`echo $TEST|sed 's/.*\.//'|sed 's/(.*)//'|sed 's/\\\\//g'|sed 's/%.*//'|sed 's/OKOKOKOKOK//g'`
+read variable TEST, 
+then find a fullstop, delete it, and delete everything before it
+then find a pair of literal (), remove them and everything inside
+then find a pair of literal \\, remove them
+
+
