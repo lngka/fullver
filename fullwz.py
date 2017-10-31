@@ -62,22 +62,12 @@ currently print the first passed in argument
 """
 def buildHomeworkList(hwString):
     hwString = LIBRARY.removeDate(hwString);
-    rawList = LIBRARY.tokenizeHomework(hwString);
+    hwList = LIBRARY.tokenizeHomework(hwString);
 
     # just in case
-    if len(rawList) == 0:
+    if len(hwList) == 0:
         print("buildHomeworkList: No homework found")
         exit(5)
-
-    hwList = []
-    HW_RANGE_DELIMITER = "-"
-    for item in rawList:
-        if HW_RANGE_DELIMITER in item:
-            items = LIBRARY.tokenizeHomeworkRange(item, HW_RANGE_DELIMITER);
-            hwList = hwList + items
-        else:
-            hwList.append(item)
-
 
     return hwList
 

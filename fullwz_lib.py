@@ -26,7 +26,15 @@ def tokenizeHomework(hwString):
     endpos = len(hwString)
     match = pattern.search(hwString, startpos, endpos)
     while match:
-        hwList.append(match.group())
+        HW_RANGE_DELIMITER = "-"
+        matchedString = match.group()
+
+        if HW_RANGE_DELIMITER in matchedString:
+            e = tokenizeHomeworkRange(matchedString, HW_RANGE_DELIMITER)
+            hwList = hwList + e
+        else:
+            hwList.append(matchedString)
+
         match = pattern.search(hwString, match.end(match.lastindex), endpos)
 
     return hwList
