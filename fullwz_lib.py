@@ -48,20 +48,6 @@ accepts a string supposedly represent a range of homeworks
 return a list of homeworks in range
 '''
 def expandHomeworkRange(theRange, DELIMITER):
-    # pattern = re.compile(r"\d{1,2}\.\d{1,2}")
-    #
-    # startpos = 0
-    # endpos = len(item)
-    # match = pattern.search(item, startpos, endpos)
-    # while match:
-    #     theRange.append(match.group())
-    #     match = pattern.search(item, match.end(), endpos)
-
-    # # just in case
-    # if len(theRange) != 2:
-    #     rangeFormatError(DELIMITER)
-    #     return []
-
     cleanedRange = []
     for item in theRange:
         item = item.strip()
