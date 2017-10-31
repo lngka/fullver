@@ -35,17 +35,48 @@ def tokenizeHomework(hwString):
 accepts a string supposedly represent a range of homeworks
 return a list of homeworks in range
 '''
-def tokenizeHomeworkRange(item, HW_RANGE_DELIMITER):
+def tokenizeHomeworkRange(item, DELIMITER):
     pattern = re.compile(r"\d{1,2}\.\d{1,2}")
     theRange = []
 
     startpos = 0
     endpos = len(item)
-    match = pattern.search(hwString, startpos, endpos)
+    match = pattern.search(item, startpos, endpos)
     while match:
-        hwList.append(match.group())
-        match = pattern.search(hwString, match.end(), endpos)
+        theRange.append(match.group())
+        match = pattern.search(item, match.end(), endpos)
 
+    # just in case
     if len(theRange) != 2:
-        pass
-    return hwList
+        rangeFormatError(DELIMITER)
+        return []
+
+    # check if same chapter
+    dotIndex = theRange[0].find(".")
+    chapA = theRange[0][:dotIndex]
+    chapB = theRange[1][:dotIndex]
+    if chapA != chapB:
+        rangeFormatError(DELIMITER)
+        return []
+    else:
+        chapter = chapA
+
+    # get homework number
+    firstHomework = int(theRange[0][dotIndex + 1:]) # +1 since start index is inclusive
+    lastHomework  = int(theRange[1][dotIndex + 1:])
+    if lastHomework < firstHomework:
+        swap = lastHomework
+        lastHomework = firstHomework
+        firstHomework = swap
+
+    # expand the homework range
+    tokenized = []
+    for i in range(firstHomework, lastHomework + 1): # +1 since end of range is exclusive
+        tokenized.append(chapter + "." + str(i))
+
+    return tokenized
+
+def rangeFormatError(DELIMITER):
+    print("tokenizeHomeworkRange: Wrong format of range of homeworks")
+    print("tokenizeHomeworkRange: [<chapter>.<number>]" + DELIMITER + "[<chapter>.<number>]")
+    print("Curent DELIMITER : " + DELIMITER)

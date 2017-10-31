@@ -79,7 +79,7 @@ def buildHomeworkList(hwString):
             hwList.append(item)
 
 
-    return rawList
+    return hwList
 
 """
 add the needed homeworks to the Wochenzettel
@@ -87,7 +87,8 @@ add the needed homeworks to the Wochenzettel
 @param {list} hwList homework list
 """
 def appendHomework(wz, hwList):
-    print("appendHomework with hwList")
+    print("appendHomework print hwList")
+    print(hwList)
     return 0
 
 # run main() if script is executed independently
