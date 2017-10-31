@@ -1,0 +1,38 @@
+Removed date-like string: 31.12.2017
+searchAndWrite: Signals not found
+%HOMEWORK_START_2
+%HOMEWORK_END_2
+For chapter 11 on file: kurz.tex
+searchAndWrite: Signals not found
+%HOMEWORK_START_3
+%HOMEWORK_END_3
+For chapter 11 on file: kurz.tex
+searchAndWrite: Signals not found
+%HOMEWORK_START_4
+%HOMEWORK_END_4
+For chapter 11 on file: kurz.tex
+searchAndWrite: Signals not found
+%HOMEWORK_START_3
+%HOMEWORK_END_3
+For chapter 2 on file: grund.tex
+searchAndWrite: Signals not found
+%HOMEWORK_START_10
+%HOMEWORK_END_10
+For chapter 2 on file: grund.tex
+searchAndWrite: Signals not found
+%HOMEWORK_START_5
+%HOMEWORK_END_5
+For chapter 2 on file: grund.tex
+searchAndWrite: Signals not found
+%HOMEWORK_START_3
+%HOMEWORK_END_3
+For chapter 3 on file: sort.tex
+searchAndWrite: Signals not found
+%HOMEWORK_START_4
+%HOMEWORK_END_4
+For chapter 3 on file: sort.tex
+searchAndWrite: Signals not found
+%HOMEWORK_START_5
+%HOMEWORK_END_5
+For chapter 3 on file: sort.tex
+Wrote: {'11': ['2', '3', '4'], '2': ['3', '10', '5'], '3': ['3', '4', '5']}
