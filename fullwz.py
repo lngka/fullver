@@ -61,14 +61,13 @@ format the string into a list of homeworks
 currently print the first passed in argument
 """
 def buildHomeworkList(hwString):
-    hwString = LIBRARY.removeDate(hwString);
-    hwList = LIBRARY.tokenizeHomework(hwString);
+    hwString = LIBRARY.removeDate(hwString)
+    hwList   = LIBRARY.tokenizeHomework(hwString)
 
     # just in case
     if len(hwList) == 0:
         print("buildHomeworkList: No homework found")
         exit(5)
-
     return hwList
 
 """
@@ -77,8 +76,7 @@ add the needed homeworks to the Wochenzettel
 @param {list} hwList homework list
 """
 def appendHomework(wz, hwList):
-    print("appendHomework print hwList")
-    print(hwList)
+    print(hwList);
     return 0
 
 # run main() if script is executed independently
