@@ -50,7 +50,7 @@ def findHomeworkString(filename):
     wz = open(filename, "r")
     hwString = ""
 
-    # signal is a line of text in the incomplete wz
+    # signal is a line of text that should be pre-written in wz
     signal = "%HOMEWORK_NEXT_LINE"
     grabNext = False
     for line in wz.readlines():
@@ -75,7 +75,10 @@ format the string into a list of homeworks
 currently print the first passed in argument
 """
 def buildHomeworkDict(hwString):
+    # remove all date-like strings
     hwString = LIBRARY.removeDate(hwString)
+    # identifies homeworks, also expand range of homeworks
+    # e.g. 3.3-3.6 will be expanded to [3.3, 3.4, 3.5, 3.6]
     hwDict   = LIBRARY.tokenizeHomework(hwString)
 
     # just in case
@@ -100,7 +103,7 @@ def appendHomework(filename, hwDict, chDict):
     wz.write("\\noindent{\\bf Auszug aus dem Skript:}\n")
 
     for chapter in hwDict:
-        LIBRARY.searchAndWritePerChapter(wz, chapter, hwDict[chapter], chDict);
+        LIBRARY.searchAndWritePerChapter(wz, chapter, hwDict[chapter], chDict)
 
     print(str(hwDict))
     wz.close()

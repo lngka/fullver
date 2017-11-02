@@ -104,7 +104,7 @@ def convertToDict(hwList):
 '''
 search a chapter once for all needed homeworks
 append them to wz
-chDict defines which script file to read
+chDict defines which skript file to read
 @param {Object} wz TextIOBase, returned by open(file, "a")
 @param {string} chapter which chapter to read from?
 @param {list} nrList of homework numbers
@@ -116,7 +116,7 @@ def searchAndWritePerChapter(wz, chapter, nrList, chDict):
         print("searchAndWritePerChapter: " + fileToRead + " Not Found")
         return
 
-    script = open(fileToRead).readlines()
+    skript = open(fileToRead).readlines()
     for nr in nrList:
         start_signal = "%HOMEWORK_START_" + nr + "\n"
         end_signal = "%HOMEWORK_END_" + nr + "\n"
