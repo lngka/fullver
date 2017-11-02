@@ -22,8 +22,10 @@ def main():
     # extract a dictionary of homeworks from wz
     filename = sys.argv[1]
     hwString = findHomeworkString(filename)
-    hwDict = buildHomeworkDict(hwString)
-
+    hwDict   = buildHomeworkDict(hwString)
+    print("Found following assignments: \n"+ str(hwDict))
+    
+    # append the homework to wz with the dictionary
     chapterDict = {
         "1": "ein.tex",
         "2": "grund.tex",
@@ -37,7 +39,6 @@ def main():
         "10": "dfs.tex",
         "11": "kurz.tex"
     }
-    # append the homework to wz with the dictionary
     appendHomework(filename, hwDict, chapterDict)
 
 """
@@ -47,11 +48,11 @@ find input file for a string which tells the weekly homework
 currently return "hwString"
 """
 def findHomeworkString(filename):
-    wz = open(filename, "r")
+    wz       = open(filename, "r")
     hwString = ""
 
     # signal is a line of text that should be pre-written in wz
-    signal = "%HOMEWORK_NEXT_LINE"
+    signal   = "%HOMEWORK_NEXT_LINE"
     grabNext = False
     for line in wz.readlines():
         if grabNext is True:
@@ -85,12 +86,14 @@ def buildHomeworkDict(hwString):
     if len(hwDict) == 0:
         print("buildHomeworkDict: No homework found")
         exit(5)
-    return hwDict
+    else: 
+        return hwDict
 
 """
-write the needed homeworks to Wochenzettel
+write the required homeworks to a file
 @param {string} filename to write to
-@param {hwDict} hwList homework dictionary (a JSON-like object)
+@param {hwDict} dictionary with keys being chapter number
+                and values are arrays holding required homeworks' number
 @param {chDict} chDict chapter dictionary
 """
 def appendHomework(filename, hwDict, chDict):
@@ -105,10 +108,11 @@ def appendHomework(filename, hwDict, chDict):
     for chapter in hwDict:
         LIBRARY.searchAndWritePerChapter(wz, chapter, hwDict[chapter], chDict)
 
-    print(str(hwDict))
+    
     wz.close()
     return 0
-
-# run main() if script is executed independently
+'''
+run main() if script was executed directly
+'''
 if __name__ == "__main__":
     main()

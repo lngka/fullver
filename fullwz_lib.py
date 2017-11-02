@@ -81,10 +81,10 @@ def expandHomeworkRange(theRange, DELIMITER):
     return tokenized
 
 def rangeFormatError(DELIMITER, where):
-    print("tokenizeHomeworkRange: Wrong format of range of homeworks")
+    print("tokenizeHomeworkRange: The correct format for range of homeworks is:")
     print("tokenizeHomeworkRange: [<chapter>.<number>]" + DELIMITER + "[<chapter>.<number>]")
-    print("Curent DELIMITER : " + DELIMITER)
-    print("Your input" + str(where))
+    print("Curent DELIMITER: " + DELIMITER)
+    print("Your input " + str(where))
 
 '''
 convert a list of homeworks into a dictionary with same content
@@ -126,8 +126,8 @@ def searchAndWritePerChapter(wz, chapter, nrList, chDict):
             for i in range(start, end + 1):
                 wz.write(script[i])
         except Exception as e:
-            print("searchAndWrite: Signals not found")
-            print(start_signal)
-            print(end_signal)
-            print("For chapter " + chapter + " on file: " + fileToRead)
+            print("\nsearchAndWrite: Following signals not found")
+            print(start_signal, end="")
+            print(end_signal, end="")
+            print("for chapter " + chapter + " in file: " + fileToRead)
             continue
