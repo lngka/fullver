@@ -1,0 +1,7 @@
+#!/usr/bin/sh
+if [ "$1" == "" ] ; then
+  echo "Usage: $0 <wz.tex>"
+  exit
+fi
+python fullwz.py $1
+pdflatex $1

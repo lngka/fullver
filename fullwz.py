@@ -24,7 +24,7 @@ def main():
     hwString = findHomeworkString(filename)
     hwDict   = buildHomeworkDict(hwString)
     print("Found following assignments: \n"+ str(hwDict))
-    
+
     # append the homework to wz with the dictionary
     chapterDict = {
         "1": "ein.tex",
@@ -40,12 +40,11 @@ def main():
         "11": "kurz.tex"
     }
     appendHomework(filename, hwDict, chapterDict)
-
+    return 0
 """
 find input file for a string which tells the weekly homework
 @param {string} filename
 @return {string} hwString homework string
-currently return "hwString"
 """
 def findHomeworkString(filename):
     wz       = open(filename, "r")
@@ -70,6 +69,17 @@ def findHomeworkString(filename):
     wz.close()
     return hwString
 
+def findHomeworkStrings(filename):
+    wz       = open(filename, "r")
+    hwString = ""
+
+    for line in wz.readlines():
+        print(line)
+
+
+    wz.close()
+    return hwString
+
 """
 format the string into a list of homeworks
 @return {dictionary} hwDict
@@ -86,7 +96,7 @@ def buildHomeworkDict(hwString):
     if len(hwDict) == 0:
         print("buildHomeworkDict: No homework found")
         exit(5)
-    else: 
+    else:
         return hwDict
 
 """
@@ -108,7 +118,7 @@ def appendHomework(filename, hwDict, chDict):
     for chapter in hwDict:
         LIBRARY.searchAndWritePerChapter(wz, chapter, hwDict[chapter], chDict)
 
-    
+
     wz.close()
     return 0
 '''

@@ -1,30 +1,88 @@
 import re, os
 '''
-accept a string, return a copy without any date in form of mm.dd.yyyy
+quick check to see a string might be a Latex comment
 '''
+def isLatexComment(string):
+    pattern = re.compile(r"^\s*%")
+    match = pattern.search(string)
+    if match:
+        return True
+    else:
+        return False
+'''
+quick check to see a string might contains homeworks
+@param {string} a string to test
+@return {boolean} true if string MIGHT be homeworks
+'''
+def maybeHomeworks(string):
+    pattern = re.compile(r"\d{1,2}\s*\.\s*\d{0,2}")
+    match = pattern.search(string)
+    if match:
+        return True
+    else:
+        return False
+'''
+accept a list of strings, remove lots of garbage
+@param {list} input_strings
+@return {list} cleaned_strings without unneeded data
+'''
+def removeGarbage(input_strings):
+    cleaned_strings = []
+    for string in input_strings:
+        # TODO: other removals, e.g. removeTime, removeTypos
+        string = removeDate(string)
+        string = removeTime(string)
+        cleaned_strings.append(string)
+
+    return cleaned_strings
+
 def removeDate(inputStr):
     pattern = re.compile(r"\d{1,2}\.\d{1,2}\.\d+")
+    found  = []
 
+    # regex.search() to search all matches in string
     startpos = 0
-    endpos = len(inputStr)
-    match = pattern.search(inputStr, startpos, endpos)
+    endpos   = len(inputStr)
+    match    = pattern.search(inputStr, startpos, endpos)
     while match:
         matchedString = match.group()
-        print("Found date-like string: " + matchedString)
+        found.append(matchedString)
         inputStr = inputStr.replace(matchedString, "")
-        match = pattern.search(inputStr, match.end(), endpos)
+        match    = pattern.search(inputStr, match.end(), endpos)
 
+    # report & return
+    if len(found):
+        print("Found date-like: " + str(found))
+    return inputStr
+
+def removeTime(inputStr):
+    pattern = re.compile(r"(\d{1,2}[.:]\d{1,2}\s*\-*\s*)*\d{1,2}[.:]\d{1,2}\s*(uhr|hr|ur|uh|hur|hu)+", flags=re.IGNORECASE)
+    found  = []
+
+    # regex.search() to search all matches in string
+    startpos = 0
+    endpos   = len(inputStr)
+    match    = pattern.search(inputStr, startpos, endpos)
+    while match:
+        matchedString = match.group()
+        found.append(matchedString)
+        inputStr = inputStr.replace(matchedString, "")
+        match    = pattern.search(inputStr, match.end(), endpos)
+
+    # report & return
+    if len(found):
+        print("Found time-like: " + str(found))
     return inputStr
 '''
 accepts a string, returns a dictionary of tokenized homework strings
 '''
 def tokenizeHomework(hwString):
     pattern = re.compile(r"(\d{1,2}[.]\d{1,2})(\s?-\s?\d{1,2}[.]\d{1,2})?")
-    hwList = []
+    hwList  = []
 
     startpos = 0
-    endpos = len(hwString)
-    match = pattern.search(hwString, startpos, endpos)
+    endpos   = len(hwString)
+    match    = pattern.search(hwString, startpos, endpos)
     while match:
         HW_RANGE_DELIMITER = "-"
         matchedString = match.group()
@@ -33,9 +91,9 @@ def tokenizeHomework(hwString):
             rangeFormatError(DELIMITER, match.group(match.lastindex))
         else:
             if HW_RANGE_DELIMITER in matchedString:
-                theRange = matchedString.split(HW_RANGE_DELIMITER)
+                theRange     = matchedString.split(HW_RANGE_DELIMITER)
                 expandedList = expandHomeworkRange(theRange, HW_RANGE_DELIMITER)
-                hwList = hwList + expandedList
+                hwList       = hwList + expandedList
             else:
                 hwList.append(matchedString)
 
