@@ -174,7 +174,7 @@ def searchAndWritePerChapter(wz, chapter, nrList, chDict):
         print("searchAndWritePerChapter: " + fileToRead + " Not Found")
         return
 
-    skript = open(fileToRead).readlines()
+    script = open(fileToRead).readlines()
     for nr in nrList:
         start_signal = "%HOMEWORK_START_" + nr + "\n"
         end_signal = "%HOMEWORK_END_" + nr + "\n"
