@@ -69,16 +69,39 @@ def findHomeworkString(filename):
     wz.close()
     return hwString
 
+"""
+find input file for a string which tells the weekly homework
+@param  {string} filename
+@return {list} hwStrings homework strings
+"""
 def findHomeworkStrings(filename):
-    wz       = open(filename, "r")
-    hwString = ""
+    wz        = open(filename, "r")
+    hwStrings = []
+    temp      = []
 
+    # first check for strings that MIGHT be homeworks
     for line in wz.readlines():
-        print(line)
-
-
+        if LIBRARY.isLatexComment(line):
+            continue
+        elif LIBRARY.maybeHomeworks(line):
+            temp.append(line)
     wz.close()
-    return hwString
+
+    # remove things that are not homeworks
+    temp = LIBRARY.removeGarbage(temp)
+
+    # keep only strings that MIGHT be homeworks
+    # after garbage removal surely they'll be homeworks
+    for string in temp:
+        if LIBRARY.maybeHomeworks(string):
+            hwStrings.append(string)
+
+
+    # report & return
+    if len(hwStrings):
+        return hwStrings
+    else:
+        return None
 
 """
 format the string into a list of homeworks

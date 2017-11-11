@@ -30,7 +30,6 @@ def findHomeworkStrings(filename):
 
     # report & return
     if len(hwStrings):
-        print(hwStrings)
         return hwStrings
     else:
         return None
@@ -38,4 +37,5 @@ def findHomeworkStrings(filename):
 
 if __name__ == "__main__":
     filename  = "wz1.tex"
-    findHomeworkStrings(filename)
+    hwStrings = findHomeworkStrings(filename)
+    print(hwStrings)
