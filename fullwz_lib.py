@@ -168,7 +168,7 @@ def convertToDict(hwList):
     for item in hwList:
         dotIndex = item.find(".")
         chapter  = item[:dotIndex]
-        nr       = item[dotIndex + 1:]
+        nr       = int(item[dotIndex + 1:])
         if chapter not in hwDict:
             hwDict[chapter] = []
             hwDict[chapter].append(nr)
