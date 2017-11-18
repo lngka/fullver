@@ -7,6 +7,22 @@ to the original wz file.
 
 wz: Wochenzettel for Prof. Hagerup
 """
+# whether to print debug messages
+DEBUG = False
+#
+pathToScripts = {
+    "1": "info3/ein.tex",
+    "2": "info3/grund.tex",
+    "3": "info3/sort.tex",
+    "4": "info3/model.tex",
+    "5": "info3/einfach.tex",
+    "6": "info3/prio.tex",
+    "7": "info3/bal.tex",
+    "8": "info3/hash.tex",
+    "9": "info3/union.tex",
+    "10": "info3/dfs.tex",
+    "11": "info3/kurz.tex"
+}
 def main():
     # param checks
     if len(sys.argv) != 2:
@@ -20,22 +36,10 @@ def main():
 
     hwStrings = findHomeworkStrings(filename)
     todos     = getTODOSFromString(hwStrings)
-    print("TODOs: ", todos)
+    if DEBUG:
+        print("TODOs: ", todos)
 
     # append the homework to wz with the dictionary
-    pathToScripts = {
-        "1": "info3/ein.tex",
-        "2": "info3/grund.tex",
-        "3": "info3/sort.tex",
-        "4": "info3/model.tex",
-        "5": "info3/einfach.tex",
-        "6": "info3/prio.tex",
-        "7": "info3/bal.tex",
-        "8": "info3/hash.tex",
-        "9": "info3/union.tex",
-        "10": "info3/dfs.tex",
-        "11": "info3/kurz.tex"
-    }
     addContentFromScript(filename, todos, pathToScripts)
     return 0
 
@@ -61,10 +65,11 @@ def findHomeworkStrings(filename):
     nogarbage = LIBRARY.removeGarbage(temp)
     if nogarbage[0]:
         temp = nogarbage[0]
-    if nogarbage[1]:
-        print("Date removed: ", nogarbage[1])
-    if nogarbage[2]:
-        print("Time removed: ", nogarbage[2])
+    if DEBUG:
+        if nogarbage[1]:
+            print("Date removed: ", nogarbage[1])
+        if nogarbage[2]:
+            print("Time removed: ", nogarbage[2])
 
     # keep only strings that MIGHT be homeworks
     # after garbage removal surely they'll be homeworks
@@ -134,7 +139,8 @@ def addContentFromScript(filename, todos, pathToScripts):
 
     wz.write("\\end{Tproblemsection}\n")
     wz.close()
-    print(filename + " done!")
+    if DEBUG:
+        print(filename + " done!")
     return
 
 if __name__ == "__main__":
@@ -142,4 +148,5 @@ if __name__ == "__main__":
     # for i in range(1,15):
     #     filename  = "wz"+str(i)+".tex"
     #     hwStrings = findHomeworkStrings(filename)
-    #     print(hwStrings)
+    #     if DEBUG:
+    #         print(hwStrings)
