@@ -36,7 +36,7 @@ def main():
         "10": "info3/dfs.tex",
         "11": "info3/kurz.tex"
     }
-    extractFromScript(filename, todos, pathToScripts)
+    addContentFromScript(filename, todos, pathToScripts)
     return 0
 
 """
@@ -88,7 +88,7 @@ def getTODOSFromString(hwStrings):
 
     for hwString in hwStrings:
         # identifies homeworks, also expand range of homeworks
-        # e.g. 3.3-3.6 will be expanded to [3.3, 3.4, 3.5, 3.6]
+        # e.g. 3.3-3.6 will be expanded to {"3": [3, 4, 5, 6]}
         tokenized   = LIBRARY.tokenizeHomework(hwString)
         # check every key in tokenized
         # to prevent duplication, append only new items to result
@@ -107,7 +107,7 @@ find & extract from script & append to filename
 @param {dictionary} pathToScripts
 @return {list} result homework strings
 """
-def extractFromScript(filename, todos, pathToScripts):
+def addContentFromScript(filename, todos, pathToScripts):
     wz = open(filename, "a")
     wz.write("\n")
     wz.write("\\newpage\n")
@@ -116,12 +116,25 @@ def extractFromScript(filename, todos, pathToScripts):
     wz.write("\\noindent{\\bf Auszug aus dem Skript:}\n")
 
     for chapter in todos:
-        pass
-        # LIBRARY.searchAndWritePerChapter(wz, chapter, hwDict[chapter], chDict)
+        allHomeWorks = LIBRARY.getHWFromScript(pathToScripts[chapter]);
+
+        # move to next chapter if nothing found
+        if allHomeWorks["total"] == 0 :
+            print("Nothing found in " + pathToScripts[chapter])
+            continue
+
+        for hwID in todos[chapter]:
+            if not allHomeWorks.get(hwID):
+                print(str(chapter) + "." + str(hwID) + " Not Found")
+                continue
+            else :
+                for line in allHomeWorks[hwID]:
+                    wz.write(line)
 
 
     wz.write("\\end{Tproblemsection}\n")
     wz.close()
+    print(filename + " done!")
     return
 
 if __name__ == "__main__":

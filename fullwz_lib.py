@@ -1,4 +1,4 @@
-import re, os
+import re, os, sys
 '''
 quick check to see a string might be a Latex comment
 '''
@@ -175,33 +175,35 @@ def convertToDict(hwList):
         else:
             hwDict[chapter].append(nr)
     return hwDict
-'''
-search a chapter once for all needed homeworks
-append them to wz
-chDict defines which skript file to read
-@param {Object} wz TextIOBase, returned by open(file, "a")
-@param {string} chapter which chapter to read from?
-@param {list} nrList of homework numbers
-@param {Dict} chDict keys are chapter numbers, values are names of textfiles
-'''
-def searchAndWritePerChapter(wz, chapter, nrList, chDict):
-    fileToRead = chDict[chapter]
-    if os.path.isfile(fileToRead) is False:
-        print("searchAndWritePerChapter: " + fileToRead + " Not Found")
-        return
+"""
+@param {string} pathtoScript to the script file
+"""
+def getHWFromScript(pathtoScript):
+    if os.path.isfile(pathtoScript) is False:
+        print("Script" + str(pathtoScript) + "Not Found")
+        exit()
 
-    script = open(fileToRead).readlines()
-    for nr in nrList:
-        start_signal = "%HOMEWORK_START_" + nr + "\n"
-        end_signal = "%HOMEWORK_END_" + nr + "\n"
-        try:
-            start = script.index(start_signal)
-            end = script.index(end_signal, start)
-            for i in range(start, end + 1):
-                wz.write(script[i])
-        except Exception as e:
-            print("\nsearchAndWrite: Following signals not found")
-            print(start_signal, end="")
-            print(end_signal, end="")
-            print("for chapter " + chapter + " in file: " + fileToRead)
-            continue
+    # rebuild path for os compatibility
+    splited = os.path.split(pathtoScript)
+    pathtoScript = os.path.join(*splited)
+    script = open(pathtoScript, "r")
+
+    result = {"total": 0}
+
+    state = "control what to do with each line";
+    for line in script.readlines():
+        if state == "reading":
+            hwID = result["total"];
+            result[hwID] = result[hwID] + line;
+
+        if "\\begin{Tproblem}" in line:
+            state = "reading"
+            # total starts at 0 but hwID - homework ID starts from 1
+            result["total"] += 1
+            hwID = result["total"]
+            result[hwID] = line;
+
+        if "\\end{Tproblem}" in line:
+            state = "stoptread"
+
+    return result
