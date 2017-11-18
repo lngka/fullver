@@ -24,20 +24,34 @@ def maybeHomeworks(string):
 '''
 accept a list of strings, remove lots of garbage
 @param {list} input_strings
-@return {list} cleaned_strings without unneeded data
+@return {list} cleaned_strings, date_strings, date_strings
 '''
 def removeGarbage(input_strings):
     cleaned_strings = []
+    date_strings = []
+    time_strings = []
+
     for string in input_strings:
-        # TODO: other removals, e.g. removeTime, removeTypos
-        string = removeDate(string)
-        string = removeTime(string)
+        temp = removeDate(string)
+        string = temp[0]
+        if temp[1]:
+            date_strings += temp[1]
+
+        temp = removeTime(string)
+        string = temp[0]
+        if temp[1]:
+            time_strings += temp[1]
+
         cleaned_strings.append(string)
 
-    return cleaned_strings
-
+    return [cleaned_strings, date_strings, time_strings]
+'''
+accept a string, remove date-like substring
+@param {inputStr} the string to clean
+@return {list} of two items, first cleaned string, second the date-like substring
+'''
 def removeDate(inputStr):
-    pattern = re.compile(r"\d{1,2}\.\d{1,2}\.\d+")
+    pattern = re.compile(r"\d{1,2}[.\-]\d{1,2}[.\-]\d+")
     found  = []
 
     # regex.search() to search all matches in string
@@ -48,18 +62,20 @@ def removeDate(inputStr):
         matchedString = match.group()
         found.append(matchedString)
         inputStr = inputStr.replace(matchedString, "")
-        match    = pattern.search(inputStr, match.end(), endpos)
+        # match.lastindex not valid because there's no grouping in pattern
+        match    = pattern.search(inputStr, match.end() - 1, endpos)
 
-    # report & return
-    if len(found):
-        print("Found date-like: " + str(found))
-    return inputStr
-
+    return [inputStr, found]
+'''
+accept a string, remove time-like substring
+@param {inputStr} the string to clean
+@return {list} of two items, first cleaned string, second the time-like substring
+'''
 def removeTime(inputStr):
-    pattern = re.compile(r"(\d{1,2}[.:]\d{1,2}\s*\-*\s*)*\d{1,2}[.:]\d{1,2}\s*(uhr|hr|ur|uh|hur|hu)+", flags=re.IGNORECASE)
+    pattern = re.compile(r"(\d{1,2}.\d{1,2})*(\s*\-+\s*)*(\d{1,2}.\d{1,2})\s*(Uhr|bis)", flags=re.IGNORECASE)
     found  = []
 
-    # regex.search() to search all matches in string
+    # regex.search() while loop to grab all matches
     startpos = 0
     endpos   = len(inputStr)
     match    = pattern.search(inputStr, startpos, endpos)
@@ -67,40 +83,40 @@ def removeTime(inputStr):
         matchedString = match.group()
         found.append(matchedString)
         inputStr = inputStr.replace(matchedString, "")
-        match    = pattern.search(inputStr, match.end(), endpos)
+        match    = pattern.search(inputStr, match.lastindex, endpos)
 
-    # report & return
-    if len(found):
-        print("Found time-like: " + str(found))
-    return inputStr
+
+    return [inputStr, found]
 '''
 accepts a string, returns a dictionary of tokenized homework strings
 '''
 def tokenizeHomework(hwString):
-    pattern = re.compile(r"(\d{1,2}[.]\d{1,2})(\s?-\s?\d{1,2}[.]\d{1,2})?")
-    hwList  = []
+    pattern = re.compile(r"(\d{1,2}[.]\d{1,2})(\s?-+\s?)?(\d{1,2}[.]\d{1,2})?")
+    result  = []
 
     startpos = 0
     endpos   = len(hwString)
     match    = pattern.search(hwString, startpos, endpos)
     while match:
-        HW_RANGE_DELIMITER = "-"
+        HW_RANGE_DELIMITER = match.group(2)
         matchedString = match.group()
 
-        if match.lastindex > 2:
-            rangeFormatError(DELIMITER, match.group(match.lastindex))
+        # matched groups should be either 1(only 1 homework)
+        # or 3 (start homework, the DELIMITER, end homework)
+        if match.lastindex not in [1,3]:
+            rangeFormatError(HW_RANGE_DELIMITER, match.group())
         else:
-            if HW_RANGE_DELIMITER in matchedString:
+            if match.lastindex is 3:
                 theRange     = matchedString.split(HW_RANGE_DELIMITER)
                 expandedList = expandHomeworkRange(theRange, HW_RANGE_DELIMITER)
-                hwList       = hwList + expandedList
+                result       = result + expandedList
             else:
-                hwList.append(matchedString)
-
+                result.append(matchedString)
+        # continue searching, startpos is now match.end(match.lastindex)
         match = pattern.search(hwString, match.end(match.lastindex), endpos)
 
-    hwDict = convertToDict(hwList)
-    return hwDict
+    result = convertToDict(result)
+    return result
 
 '''
 accepts a string supposedly represent a range of homeworks
@@ -140,7 +156,7 @@ def expandHomeworkRange(theRange, DELIMITER):
 
 def rangeFormatError(DELIMITER, where):
     print("tokenizeHomeworkRange: The correct format for range of homeworks is:")
-    print("tokenizeHomeworkRange: [<chapter>.<number>]" + DELIMITER + "[<chapter>.<number>]")
+    print("tokenizeHomeworkRange: [<chapter>.<number>]" + "(\s?-+\s?)" + "[<chapter>.<number>]")
     print("Curent DELIMITER: " + DELIMITER)
     print("Your input " + str(where))
 
